@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const morgan =require('morgan')
 const app = express()
 const cors = require('cors')
+const Person = require('./models/persons') 
 
 
 app.use(cors())
@@ -50,14 +52,13 @@ app.get('/info',(request,response)=>{
     ${Date()}</p>`)
 })
 
-app.get('/api/persons/:id',(request,response)=>{
-    const id = request.params.id
-    const person = persons.find(person=>person.id==id)
-    if (person){
-        response.json(person)
-    }else{
-        response.status(404).send("Person does not exist")
-    }
+app.get('/api/persons',(request,response)=>{
+    Person.find({}).then((persons) => {
+        response.json(persons.map((person) => person.toJSON()))
+      }).catch(error => {
+        console.error('Error fetching persons from the database:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+      })
 
 })
 
@@ -104,7 +105,7 @@ app.get('/api/persons',(request,response)=>{
 })
 
 
-const PORT = process.env.PORT || 3003
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

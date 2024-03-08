@@ -7,11 +7,19 @@ if (process.argv.length < 3) {
 
 const password = process.argv[2];
 
-const url = `mongodb+srv://phonebook:${password}@cluster0.fasghgl.mongodb.net/?retryWrites=true&w=majority`;
-console.log('connecting to mongodb');
+const url = process.env.MONGODB_URI
+
+console.log('connecting to ',url);
+    
 
 mongoose.set('strictQuery', false);
-mongoose.connect(url);
+mongoose.connect(url)
+.then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch(error => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 const phonebookSchema = new mongoose.Schema({
   name: String,
@@ -52,3 +60,4 @@ if (process.argv.length === 3) {
   console.log('Invalid number of arguments. Usage: node mongo.js <password> <name> <number>');
   mongoose.connection.close();
 }
+module.exports = mongoose.model('Person', phonebookSchema)
