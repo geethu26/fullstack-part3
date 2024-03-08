@@ -1,0 +1,21 @@
+.message{
+    color:green;
+    font-size:25px;
+    border: solid 5px;
+    border-radius: 5px;
+    padding:10px;
+    margin-bottom:10px;
+    font-family: 'Courier New', Courier, monospace
+}
+/* Add styles for success message */
+.message-success {
+    background-color: #dff0d8; /* Green background color */
+    color: #3c763d; /* Dark green text color */
+  }
+  
+  /* Add styles for error message */
+  .message-error {
+    background-color: #f2dede; /* Red background color */
+    color: #a94442; /* Dark red text color */
+  }
+  
