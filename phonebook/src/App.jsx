@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import noteService from './services/persons'
+import personService from './services/persons'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
@@ -14,7 +14,8 @@ const App = () => {
   const [searchName, setSearchName] = useState('')
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState(null) // New state for message type
-
+  const [errorMessage,setErrorMessage]=useState(null)
+  const setErrorMessageType = ''
   useEffect(() => {
     noteService.getAll().then(initialPerson => {
       setPersons(initialPerson)
@@ -44,7 +45,7 @@ const App = () => {
 
       const updatedPerson = { ...existingPerson, number: numbers }
 
-      noteService
+      personService
         .update(existingPerson.id, updatedPerson)
         .then((returnedPerson) => {
           setPersons(
@@ -64,7 +65,7 @@ const App = () => {
         number: numbers,
       };
 
-      noteService
+      personService
         .create(nameObject)
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson))
@@ -78,14 +79,26 @@ const App = () => {
           }, 5000)
         })
         .catch((error) => {
-          console.log("Couldn't create person", error)
+          // Check if the error has a response and a data property
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.error;
+            // Update state to display the error message
+            setErrorMessage(errorMessage)
+            setErrorMessageType('error') // Set error message type
+            setTimeout(() => {
+              setErrorMessage(null)
+              setErrorMessageType(null)
+            }, 5000)
+          } else {
+            // If the error doesn't have a response or data property, log the error
+            console.error('An unexpected error occurred:', error)
+          }
         })
+      }
     }
-  }
-
   const deletePerson = (id) => {
     console.log("Deleting person with id: ", id);
-    noteService
+    personService
       .remove(id)
       .then(() => {
         setPersons((prevPersons) =>
